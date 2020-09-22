@@ -6,6 +6,7 @@ class Spending extends CI_Controller {
 	public function __construct()
 	{
 		parent::__construct();
+		$this->auth->check_login();
 		date_default_timezone_set('Asia/Jakarta');
 		$this->load->model('spending_model', 'spending');
 		$this->load->model('kas_model', 'kas');
@@ -122,7 +123,11 @@ class Spending extends CI_Controller {
 	public function get()
 	{
 		if ( $this->input->is_ajax_request() ) {
-			$this->output->set_content_type('application/json')->set_output(json_encode($this->spending->index()));
+			$data = [
+				'spending'	=> $this->spending->index(),
+				'user_type'	=> $this->session->userdata('user_type')
+			];
+			$this->output->set_content_type('application/json')->set_output(json_encode($data));
 		}
 	}
 

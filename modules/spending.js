@@ -71,68 +71,70 @@ $(function () {
 
 			spendingTable.DataTable()
 
-			if ( data.length > 0 ) {
-				tBody.on('click', 'tr', function (event) {
-					let id = $(this).data('id')
+			if ( data.user_type == null ) {
+				if ( data.length > 0 ) {
+					tBody.on('click', 'tr', function (event) {
+						let id = $(this).data('id')
 
-					$('tr').removeClass('bg-selected')
-					$(this).addClass('bg-selected')
+						$('tr').removeClass('bg-selected')
+						$(this).addClass('bg-selected')
 
-					$('#action').removeClass('d-none')
+						$('#action').removeClass('d-none')
 
-					$('#btn-cancel').click(function (event) {
-						event.preventDefault()
+						$('#btn-cancel').click(function (event) {
+							event.preventDefault()
 
-						cancel()
-					})
+							cancel()
+						})
 
-					$('#btn-edit').click(function (event) {
-						event.preventDefault()
+						$('#btn-edit').click(function (event) {
+							event.preventDefault()
 
-						$.ajax({
-							type: "GET",
-							url: site + "/spending/edit/" + id,
-							success: function (response) {
-								$('#spending-modal-title').html('Edit Pengeluaran')
-								$('#id').val(response.id)
-								$('#amount').val(response.amount)
-								$('#explanation').val(response.explanation)
-								$('#spending-modal').modal('show')
-							}
+							$.ajax({
+								type: "GET",
+								url: site + "/spending/edit/" + id,
+								success: function (response) {
+									$('#spending-modal-title').html('Edit Pengeluaran')
+									$('#id').val(response.id)
+									$('#amount').val(response.amount)
+									$('#explanation').val(response.explanation)
+									$('#spending-modal').modal('show')
+								}
+							})
+						})
+
+						$('#btn-delete').click(function (event) {
+							event.preventDefault()
+
+							Swal.fire({
+			                    title: "Yakin..??",
+			                    icon: "warning",
+			                    text: "Data Akan Di Hapus!",
+			                    showCancelButton: true,
+			                    confirmButtonColor: '#3085d6',
+			                    cancelButtonColor: '#d33',
+			                    confirmButtonText: 'Hapus',
+			                    cancelButtonText: 'Batal'
+			                }).then((result) => {
+			                    if ( result.value ) {
+			                        $.ajax({
+			                            type: "GET",
+			                            url: site + "/spending/delete/" + id,
+			                            success: function (response) {
+			                            	cancel()
+			                            	loadData()
+			                                Swal.fire({
+			                                    title: "Sukses",
+			                                    text: response,
+			                                    icon: "success"
+			                                })
+			                            }
+			                        })
+			                    }
+			                })
 						})
 					})
-
-					$('#btn-delete').click(function (event) {
-						event.preventDefault()
-
-						Swal.fire({
-		                    title: "Yakin..??",
-		                    icon: "warning",
-		                    text: "Data Akan Di Hapus!",
-		                    showCancelButton: true,
-		                    confirmButtonColor: '#3085d6',
-		                    cancelButtonColor: '#d33',
-		                    confirmButtonText: 'Hapus',
-		                    cancelButtonText: 'Batal'
-		                }).then((result) => {
-		                    if ( result.value ) {
-		                        $.ajax({
-		                            type: "GET",
-		                            url: site + "/spending/delete/" + id,
-		                            success: function (response) {
-		                            	cancel()
-		                            	loadData()
-		                                Swal.fire({
-		                                    title: "Sukses",
-		                                    text: response,
-		                                    icon: "success"
-		                                })
-		                            }
-		                        })
-		                    }
-		                })
-					})
-				})
+				}	
 			}
 		})
 	}

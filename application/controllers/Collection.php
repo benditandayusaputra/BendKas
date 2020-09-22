@@ -6,6 +6,7 @@ class Collection extends CI_Controller {
 	public function __construct()
 	{
 		parent::__construct();
+		$this->auth->check_login();
 		$this->load->model('collection_model', 'collection');
 		$this->load->model('schedule_model', 'schedule');
 		$this->load->model('archive_model', 'archive');
@@ -44,16 +45,18 @@ class Collection extends CI_Controller {
 			if ( empty($check) ) {
 				if ( $this->session->userdata('collect') == true ) {
 					$users = $this->user->index();
+					$collections = $this->collection->collecting(date('Y-m-d'));
+					if ( empty($collections) ) {
+						foreach ($users as $user) {
+							$data = [
+								'users_id'		=> $user->id,
+								'amount'		=> $schedule->amount,
+								'date'			=> date('Y-m-d'),
+								'status_kas'	=> 'Belum'
+							];	
 
-					foreach ($users as $user) {
-						$data = [
-							'users_id'		=> $user->id,
-							'amount'		=> $schedule->amount,
-							'date'			=> date('Y-m-d'),
-							'status_kas'	=> 'Belum'
-						];	
-
-						$this->collection->insert($data);
+							$this->collection->insert($data);
+						}	
 					}
 
 					$data = [
@@ -80,7 +83,7 @@ class Collection extends CI_Controller {
 	{
 		$this->session->unset_userdata('collect');
 
-		$collections = $this->collection->collectFinish(date('Y-m-d'));
+		$collections = $this->collection->collecting(date('Y-m-d'));
 		$userKas = $this->collection->countUserKas(date('Y-m-d'));
 		$userNotKas = $this->collection->countUserNotKas(date('Y-m-d'));
 		$amount = 0;

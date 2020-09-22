@@ -49,7 +49,7 @@ class Collection_model extends CI_Model {
 		return $this->db->get_where($this->table, ['date' => $date])->result();
 	}	
 
-	public function collectFinish($date)
+	public function collecting($date)
 	{
 		$this->db->select('kas_collections.*, users.name');
 		$this->db->join('users', 'kas_collections.users_id = users.id', 'left');

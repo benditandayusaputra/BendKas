@@ -39,7 +39,7 @@ class User_model extends CI_Model {
 
 	public function login($username, $password)
 	{
-		return $this->db->get_where($this->table, ['username' => $username, 'password' => $password])->row();
+		return $this->db->get_where($this->table, ['nis' => $username, 'password' => $password])->row();
 	}	
 
 }

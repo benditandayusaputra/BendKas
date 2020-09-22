@@ -58,7 +58,7 @@ $(function () {
 		}).done(function (data) {
 			let html = ``
 
-			$.each(data, function (index, value) {
+			$.each(data.income, function (index, value) {
 				html += `<tr data-id="${ value.id }">
 							<td>${ index + 1 }</td>
 							<td>Rp. ${ value.amount },00</td>
@@ -71,68 +71,70 @@ $(function () {
 
 			incomeTable.DataTable()
 
-			if ( data.length > 0 ) {
-				tBody.on('click', 'tr', function (event) {
-					let id = $(this).data('id')
+			if ( data.user_type == null ) {
+				if ( data.length > 0 ) {
+					tBody.on('click', 'tr', function (event) {
+						let id = $(this).data('id')
 
-					$('tr').removeClass('bg-selected')
-					$(this).addClass('bg-selected')
+						$('tr').removeClass('bg-selected')
+						$(this).addClass('bg-selected')
 
-					$('#action').removeClass('d-none')
+						$('#action').removeClass('d-none')
 
-					$('#btn-cancel').click(function (event) {
-						event.preventDefault()
+						$('#btn-cancel').click(function (event) {
+							event.preventDefault()
 
-						cancel()
-					})
+							cancel()
+						})
 
-					$('#btn-edit').click(function (event) {
-						event.preventDefault()
+						$('#btn-edit').click(function (event) {
+							event.preventDefault()
 
-						$.ajax({
-							type: "GET",
-							url: site + "/income/edit/" + id,
-							success: function (response) {
-								$('#income-modal-title').html('Edit Pemasukan')
-								$('#id').val(response.id)
-								$('#amount').val(response.amount)
-								$('#explanation').val(response.explanation)
-								$('#income-modal').modal('show')
-							}
+							$.ajax({
+								type: "GET",
+								url: site + "/income/edit/" + id,
+								success: function (response) {
+									$('#income-modal-title').html('Edit Pemasukan')
+									$('#id').val(response.id)
+									$('#amount').val(response.amount)
+									$('#explanation').val(response.explanation)
+									$('#income-modal').modal('show')
+								}
+							})
+						})
+
+						$('#btn-delete').click(function (event) {
+							event.preventDefault()
+
+							Swal.fire({
+			                    title: "Yakin..??",
+			                    icon: "warning",
+			                    text: "Data Akan Di Hapus!",
+			                    showCancelButton: true,
+			                    confirmButtonColor: '#3085d6',
+			                    cancelButtonColor: '#d33',
+			                    confirmButtonText: 'Hapus',
+			                    cancelButtonText: 'Batal'
+			                }).then((result) => {
+			                    if ( result.value ) {
+			                        $.ajax({
+			                            type: "GET",
+			                            url: site + "/income/delete/" + id,
+			                            success: function (response) {
+			                            	cancel()
+			                            	loadData()
+			                                Swal.fire({
+			                                    title: "Sukses",
+			                                    text: response,
+			                                    icon: "success"
+			                                })
+			                            }
+			                        })
+			                    }
+			                })
 						})
 					})
-
-					$('#btn-delete').click(function (event) {
-						event.preventDefault()
-
-						Swal.fire({
-		                    title: "Yakin..??",
-		                    icon: "warning",
-		                    text: "Data Akan Di Hapus!",
-		                    showCancelButton: true,
-		                    confirmButtonColor: '#3085d6',
-		                    cancelButtonColor: '#d33',
-		                    confirmButtonText: 'Hapus',
-		                    cancelButtonText: 'Batal'
-		                }).then((result) => {
-		                    if ( result.value ) {
-		                        $.ajax({
-		                            type: "GET",
-		                            url: site + "/income/delete/" + id,
-		                            success: function (response) {
-		                            	cancel()
-		                            	loadData()
-		                                Swal.fire({
-		                                    title: "Sukses",
-		                                    text: response,
-		                                    icon: "success"
-		                                })
-		                            }
-		                        })
-		                    }
-		                })
-					})
-				})
+				}
 			}
 		})
 	}

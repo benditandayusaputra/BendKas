@@ -9,24 +9,45 @@ class Auth
 	{
         $this->ci =& get_instance();
         $this->ci->load->model('user_model', 'user');
+        $this->ci->load->model('admin_model', 'admin');
 	}
 
 	public function login($username, $password)
 	{
 		$user = $this->ci->user->login($username, $password);
-		if ( empty($user) ) {
+		$admin = $this->ci->admin->login($username, $password);
+		if ( !empty($user) ) {
+			$session = [
+				'bendkasLogin' 	=> true,
+				'id'			=> $user->id,
+				'nis'			=> $user->nis,
+				'no'			=> $user->no,
+				'name'			=> $user->name,	
+				'gender'		=> $user->gender,	
+				'wa'			=> $user->wa,	
+				'user_type'		=> $user->user_type,	
+				'role'			=> $user->role	
+			];
+			$this->ci->session->set_userdata($session);
+			redirect(site_url('dashboard'),'refresh');
+		} elseif ( !empty($admin) ) {
+			$session = [
+				'bendkasLogin'	=> true,
+				'id'			=> $admin->id,
+				'username'		=> $admin->username,
+				'name'			=> $admin->name
+			];
+			$this->ci->session->set_userdata($session);
+			redirect(site_url('dashboard'),'refresh');
+		} else {
 			$this->ci->session->set_flashdata('error', 'Username atau Password Salah');
 			redirect('login','refresh');
-		} else {
-			$this->ci->session->set_userdata(['bendkasLogin' => true]);
-			$this->ci->session->set_userdata( $user );
-			redirect(site_url('dashboard'),'refresh');
 		}
 	}
 
 	public function check_login()
 	{
-		if ( $this->ci->session->userdata('bendkasLogin') != true ) {
+		if ( !$this->ci->session->userdata('bendkasLogin') ) {
 			$this->ci->session->set_flashdata('warning', 'Anda Belum Login');
 			redirect('login','refresh');
 		}
@@ -39,6 +60,7 @@ class Auth
 		$this->ci->session->unset_userdata('nis');
 		$this->ci->session->unset_userdata('no');
 		$this->ci->session->unset_userdata('name');
+		$this->ci->session->unset_userdata('username');
 		$this->ci->session->unset_userdata('gender');
 		$this->ci->session->unset_userdata('wa');
 		$this->ci->session->unset_userdata('address');

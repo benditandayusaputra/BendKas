@@ -6,6 +6,7 @@ class Income extends CI_Controller {
 	public function __construct()
 	{
 		parent::__construct();
+		$this->auth->check_login();
 		date_default_timezone_set('Asia/Jakarta');
 		$this->load->model('income_model', 'income');
 		$this->load->model('kas_model', 'kas');
@@ -123,7 +124,11 @@ class Income extends CI_Controller {
 	public function get()
 	{
 		if ( $this->input->is_ajax_request() ) {
-			$this->output->set_content_type('application/json')->set_output(json_encode($this->income->index()));
+			$data = [
+				'income'	=> $this->income->index(),
+				'user_type'	=> $this->session->userdata('user_type')
+			];
+			$this->output->set_content_type('application/json')->set_output(json_encode($data));
 		}
 	}
 

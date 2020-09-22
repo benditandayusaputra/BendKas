@@ -27,14 +27,6 @@
         Navigasi
       </div>
 
-      <!-- Nav Item - Pages Collapse Menu -->
-      <li class="nav-item" id="nav-kas">
-        <a class="nav-link collapsed" href="<?php echo site_url('kas') ?>">
-          <i class="fas fa-fw fa-dollar-sign"></i>
-          <span>Kas</span>
-        </a>
-      </li>
-
       <li class="nav-item" id="nav-income">
         <a class="nav-link collapsed" href="<?php echo site_url('income') ?>">
           <i class="fas fa-fw fa-money-check-alt"></i>
@@ -63,12 +55,21 @@
         </a>
       </li>
 
+      <li class="nav-item" id="nav-bendahara">
+        <a class="nav-link collapsed" href="<?php echo site_url('bendahara') ?>">
+          <i class="fas fa-fw fa-user-tie"></i>
+          <span>Bendahara</span>
+        </a>
+      </li>
+
+      <?php if ( $this->session->userdata('role') == null ) : ?>
       <li class="nav-item" id="nav-user">
         <a class="nav-link collapsed" href="<?php echo site_url('user') ?>">
           <i class="fas fa-fw fa-users"></i>
           <span>User</span>
         </a>
       </li>
+      <?php endif ?>
 
       <!-- Divider -->
       <hr class="sidebar-divider d-none d-md-block">
